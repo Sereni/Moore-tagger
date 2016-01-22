@@ -20,7 +20,7 @@ def get_links(dirname):
     return links
 
 
-def get_text(fname): # неа, эта штука только на половине статей работает =(( ну ее н
+def get_text(fname):
     '''
     :param fname: путь к хтмл файлу с полной версией новостной статьи
     :return: текст статьи (строка)
@@ -30,9 +30,9 @@ def get_text(fname): # неа, эта штука только на полови�
     root = lxml.html.fromstring(html)
     posts = root.xpath(u'//*[contains(@class, "post-title")]/text()') + ['\n']
     posts += root.xpath(u'//*[contains(@class, "post__text")]/p/text()')
-    if not posts:
+    if posts == ['\n']:
         posts = root.xpath(u'//*[contains(@class, "title")]/p/text()') + ['\n']
-        posts += root.xpath(u'//*[contains(@class, "text q lead-in")]/text()')
+        posts += root.xpath(u'//*[contains(@class, "text") or contains(@class, "q") or contains(@class, "lead-in")]/text()')
     return ' '.join(posts)
 
 
