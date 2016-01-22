@@ -12,7 +12,7 @@ def get_links(dirname):
     '''
     links = []
     for fname in os.listdir(dirname):
-        with open(fname, 'r', encoding='utf-8') as f:
+        with open(os.path.join(dirname,fname), 'r', encoding='utf-8') as f:
             html = f.read()
         root = lxml.html.fromstring(html)
         posts = root.xpath(u'//*[contains(@class, "post__content")]/h2/a/@href')
@@ -20,7 +20,7 @@ def get_links(dirname):
     return links
 
 
-def get_text(fname):
+def get_text(fname): # неа, эта штука только на половине статей работает =(( ну ее н
     '''
     :param fname: путь к хтмл файлу с полной версией новостной статьи
     :return: текст статьи (строка)
@@ -30,6 +30,16 @@ def get_text(fname):
     root = lxml.html.fromstring(html)
     posts = root.xpath(u'//*[contains(@class, "post-title")]/text()') + ['\n']
     posts += root.xpath(u'//*[contains(@class, "post__text")]/p/text()')
+    if not posts:
+        posts = root.xpath(u'//*[contains(@class, "title")]/p/text()') + ['\n']
+        posts += root.xpath(u'//*[contains(@class, "text q lead-in")]/text()')
     return ' '.join(posts)
 
-print (get_text('news.html'))
+
+# DIR = 'pages'  # тут путь к папке со страницами типа http://www.hse.ru/news/page5.html
+# with open('all_links.txt', 'w', encoding='utf-8') as f:  # напишем ссылки в all_links.txt
+#     f.write('\n'.join(get_links(DIR)))
+
+# DIR2 = 'articles'  # тут путь к папке с полными статьями
+# for fname in os.listdir(DIR2):
+#     print(get_text(os.path.join(DIR2,fname)))
