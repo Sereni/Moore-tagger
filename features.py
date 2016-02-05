@@ -20,8 +20,9 @@ def contains_digit(word):
 
 
 def contains_hyphen(word):
-    if '-' in word:  # other hyphens?
-        return True
+    for hyphen in '―–‒-—':  # added other hyphens; probably, some of them are dashes
+        if hyphen in word:
+            return True
     return False
 
 
@@ -53,7 +54,7 @@ def shape1(word):
 
 def shape2(word):
     s = shape1(word)
-    s = re.sub('X+', 'X', s)  # performance hit?
+    s = re.sub('X+', 'X', s)  # performance hit? # why?
     s = re.sub('x+', 'x', s)
     s = re.sub('0+', '0', s)
     return s
