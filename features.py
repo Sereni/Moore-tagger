@@ -48,7 +48,7 @@ def shape1(word):
         elif char.isupper():
             transformed += 'X'
         else:
-            transformed += '0'
+            transformed += char  # this covers both 0's and punctuation
     return transformed
 
 
@@ -66,5 +66,3 @@ def full_word(word):
 
 def full_word_lower(word):
     return word.lower()
-
-# todo clusters
