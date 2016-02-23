@@ -3,6 +3,8 @@ import os
 import xml.etree.ElementTree as ET
 import features as ft
 import csv
+import numpy
+
 
 # this module extracts features for training
 # uses disambiguated RNC format
@@ -11,10 +13,10 @@ import csv
 
 
 class Corpus():
-
     def __init__(self):
         self.raw_tokens = set([])
         self.tokens = set([])
+        self.feature_array = None
 
     def load_file(self, path):
         """
@@ -25,8 +27,14 @@ class Corpus():
 
             # find node text. using this instead of elem.text, because the text is after nested elements
             word = self.normalize(''.join(elem.itertext()))
+
+            # get POS tag
+            for item in elem.iter('ana'):
+                tag = item.get("gr").split('=')[0].split(',')[0]
+                break
+
             if word:
-                self.raw_tokens.add(word)
+                self.raw_tokens.add((word, tag))  # todo а что делать с омонимией? писать, не писать?
 
     def load_dir(self, path):
         """
@@ -55,9 +63,38 @@ class Corpus():
         """
         Run all tokens through feature extraction
         and store in a separate set
+        Token is a tuple of (word, POS)
         """
-        for word in self.raw_tokens:
-            self.tokens.add(Token(word))
+        for item in self.raw_tokens:
+            self.tokens.add(Token(item))
+
+    def make_array(self):
+
+        for token in self.tokens:
+
+            # create row from token features
+            row = (
+                    token.word, token.word_lower, str(int(token.capital)), str(int(token.digit)),
+                    str(int(token.hyphen)),
+                    token.prefix1, token.prefix2, token.prefix3, token.prefix4,
+                    token.suffix1, token.suffix2, token.suffix3, token.suffix4,
+                    token.shape1, token.shape2
+                )
+
+            if self.feature_array is None:
+                self.feature_array = numpy.array(row)
+
+            else:
+                # add new row to array
+                self.feature_array = numpy.vstack([self.feature_array, row])
+
+    def to_array(self):
+        """
+        Dump feature array to file (create array if needed)
+        """
+        if self.feature_array is None:
+            self.make_array()
+        self.feature_array.dump('feature_array.dat')
 
     def to_csv(self):
         """
@@ -73,20 +110,22 @@ class Corpus():
 
             for token in self.tokens:
                 row = (
-                    token.word, token.word_lower, str(int(token.capital)), str(int(token.digit)), str(int(token.hyphen)),
+                    token.word, token.word_lower, str(int(token.capital)), str(int(token.digit)),
+                    str(int(token.hyphen)),
                     token.prefix1, token.prefix2, token.prefix3, token.prefix4,
                     token.suffix1, token.suffix2, token.suffix3, token.suffix4,
                     token.shape1, token.shape2
-                       )
+                )
                 writer.writerow(row)
 
 
 class Token():
-    def __init__(self, word):
+    def __init__(self, item):
         """
         Initalize all the features for a given token
         """
 
+        word = item[0]
         self.capital = ft.contains_capital(word)
         self.digit = ft.contains_digit(word)
         self.hyphen = ft.contains_hyphen(word)
@@ -106,12 +145,24 @@ class Token():
         self.word = word
         self.word_lower = word.lower()
 
+        self.pos = item[1]
+
 
 def test():
     corpus = Corpus()
     corpus.load_dir(os.path.join(os.getcwd(), "test_corpus"))
     corpus.get_features()
     corpus.to_csv()
+    # corpus.to_array() # fixme this is taking VERY long
+
+
+def run():
+    corpus = Corpus()
+    corpus.load_dir(os.path.join(os.getcwd(), "full_corpus"))
+    corpus.get_features()
+    corpus.to_csv()
+
 
 if __name__ == '__main__':
-    test()
+    # test()
+    run()
