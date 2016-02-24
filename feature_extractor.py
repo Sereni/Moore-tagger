@@ -78,7 +78,7 @@ class Corpus():
                     str(int(token.hyphen)),
                     token.prefix1, token.prefix2, token.prefix3, token.prefix4,
                     token.suffix1, token.suffix2, token.suffix3, token.suffix4,
-                    token.shape1, token.shape2
+                    token.shape1, token.shape2, token.pos
                 )
 
             if self.feature_array is None:
@@ -103,7 +103,7 @@ class Corpus():
         HEADER = ('token', 'token_lower', 'capital', 'digit', 'hyphen',
                   'prefix1', 'prefix2', 'prefix3', 'prefix4',
                   'suffix1', 'suffix2', 'suffix3', 'suffix4',
-                  'shape1', 'shape2')
+                  'shape1', 'shape2', 'POS')
         with open('feature_matrix.csv', 'w') as out:
             writer = csv.writer(out, delimiter=';', quotechar='"')
             writer.writerow(HEADER)
@@ -114,7 +114,7 @@ class Corpus():
                     str(int(token.hyphen)),
                     token.prefix1, token.prefix2, token.prefix3, token.prefix4,
                     token.suffix1, token.suffix2, token.suffix3, token.suffix4,
-                    token.shape1, token.shape2
+                    token.shape1, token.shape2, token.pos
                 )
                 writer.writerow(row)
 
