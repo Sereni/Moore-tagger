@@ -22,6 +22,15 @@ def pos(word):
 
     >>> pos('шпиль')
     'S'
+
+    >>> pos('стекло')
+    'S'
+
+    >>> pos('мой')
+    'A-PRO'
+
+    >>> pos('он')
+    'S-PRO'
     """
     features = Token((word, None)).features_dict
     vector = vec.transform(features)
