@@ -2,7 +2,7 @@ __author__ = 'Sereni'
 from sklearn.externals import joblib
 from feature_extractor import Token
 
-clf = joblib.load('model.pkl')
+clf = joblib.load('model2.pkl')
 vec = joblib.load('feature_transformer.pkl')
 
 def pos(word):
