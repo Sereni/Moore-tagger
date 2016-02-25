@@ -1,13 +1,11 @@
 __author__ = 'Sereni'
-
-# using SVM hinge loss objective w/ gradient descent (not a simple linear SVC)
 from sklearn.linear_model import SGDClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.externals import joblib
 import csv
 import numpy
 
-# todo run through with your features
+
 def import_csv(path):
     """
     Import feature data from a given csv file
@@ -30,12 +28,46 @@ def import_csv(path):
     return data, target
 
 
+def import_as_dict(path):
+    """
+    Import feature data from a given csv file
+    :param path: path to CSV file containing tokens and features
+    :return features and target tags as sparse matrices
+    Should deal with categorical input.
+    """
+
+    with open(path) as f:
+        reader = csv.reader(f, delimiter=';')
+        header = next(reader, None)
+
+        data = []
+        target = []
+
+        # read things from csv
+        for row in reader:
+            data.append(dict(zip(header[:-1], row[:-1])))  # make a dict of feature : value
+            target.append(row[-1])
+
+        from sklearn.feature_extraction import DictVectorizer
+        vec = DictVectorizer()
+
+        # convert categorical features to floats
+        data_matrix = vec.fit_transform(data)
+
+        # convert targets to numpy array as strings
+        target_matrix = numpy.array(target)
+
+        # save converter to use in prediction
+        joblib.dump(vec, 'feature_transformer.pkl')
+
+    return data_matrix, target_matrix
 
 # todo add Elya's word clusters
 if __name__ == '__main__':
 
     # import data
-    data, target = import_csv('/Users/Sereni/PycharmProjects/Moore-tagger/feature_matrix.csv')
+    data, target = import_as_dict('/Users/Sereni/PycharmProjects/Moore-tagger/feature_matrix.csv')
+
     # todo early stopping
     # initialize classifier
     clf = SGDClassifier(loss='hinge',              # hinge loss objective
@@ -46,8 +78,8 @@ if __name__ == '__main__':
                         )
     # split data into train and test subsets
     data_train, data_test, target_train, target_test = train_test_split(data, target)
-    clf.fit(data_train, target_train)  # fixme ValueError: could not convert string to float: 'асфальте'
-    clf.score(data_test, target_test)
+    clf.fit(data_train, target_train)
+    clf.score(data_test, target_test)  # fixme scoring does not work
 
     joblib.dump(clf, 'model.pkl')
     # todo grid search and save best model
