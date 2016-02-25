@@ -155,7 +155,7 @@ class Token():
                               'prefix1', 'prefix2', 'prefix3', 'prefix4',
                               'suffix1', 'suffix2', 'suffix3', 'suffix4',
                               'shape1', 'shape2', 'POS')
-        self.features_dict = dict(zip(self.feature_names, self.features))
+        self.features_dict = dict(zip(self.feature_names[:-1], self.features[:-1]))
 
 
 def test():
