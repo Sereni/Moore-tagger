@@ -146,6 +146,11 @@ class Token():
         self.word_lower = word.lower()
 
         self.pos = item[1]
+        
+        self.features = (self.word, self.word_lower, int(self.capital), int(self.digit), int(self.hyphen),
+                         self.prefix1, self.prefix2, self.prefix3, self.prefix4,
+                         self.suffix1, self.suffix2, self.suffix3, self.suffix4,
+                         self.shape1, self.shape2, self.pos)
 
 
 def test():
