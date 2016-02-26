@@ -3,7 +3,7 @@ from sklearn.externals import joblib
 from feature_extractor import Token
 
 clf = joblib.load('model2.pkl')
-vec = joblib.load('feature_transformer.pkl')
+vec = joblib.load('feature_transformer2.pkl')
 
 def pos(word):
     """
@@ -39,6 +39,12 @@ def pos(word):
 if __name__ == "__main__":
     # clf = joblib.load('model.pkl')
     # vec = joblib.load('feature_transformer.pkl')
+
+    # demo part
+    #phrase = input('Введите фразу: ')
+    #words = phrase.split()
+    #for word in words:
+    #    print(word, pos(word))
 
     import doctest
     doctest.testmod()
