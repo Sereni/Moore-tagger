@@ -1,3 +1,5 @@
+# coding: utf-8
+
 __author__ = 'Sereni'
 import os
 import xml.etree.ElementTree as ET
@@ -22,6 +24,7 @@ class Corpus():
         """
         Open RNC XML and get all unique tokens
         """
+        words_pos = {}
         tree = ET.parse(path)
         for elem in tree.iter('w'):
 
@@ -29,12 +32,12 @@ class Corpus():
             word = self.normalize(''.join(elem.itertext()))
 
             # get POS tag
-            for item in elem.iter('ana'):
-                tag = item.get("gr").split('=')[0].split(',')[0]
-                break
+            #for item in elem.iter('ana'):
+            tags = [item.get("gr").split('=')[0].split(',')[0] for item in elem.iter('ana')]
+            #    break
 
             if word:
-                self.raw_tokens.add((word, tag))  # todo а что делать с омонимией? писать, не писать?
+                self.raw_tokens.add((word, tags[0])) # todo а что делать с омонимией? писать, не писать?
 
     def load_dir(self, path):
         """
@@ -168,9 +171,9 @@ def test():
 
 def run():
     corpus = Corpus()
-    corpus.load_dir(os.path.join(os.getcwd(), "full_corpus"))
-    corpus.get_features()
-    corpus.to_csv()
+    corpus.load_dir(os.path.join(os.getcwd(), "texts/post1950/baranov"))
+    #corpus.get_features()
+    #corpus.to_csv()
 
 
 if __name__ == '__main__':

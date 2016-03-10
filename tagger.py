@@ -41,10 +41,10 @@ if __name__ == "__main__":
     # vec = joblib.load('feature_transformer.pkl')
 
     # demo part
-    #phrase = input('Введите фразу: ')
-    #words = phrase.split()
-    #for word in words:
-    #    print(word, pos(word))
+    phrase = input('Введите фразу: ')
+    words = phrase.split()
+    for word in words:
+        print(word, pos(word))
 
-    import doctest
-    doctest.testmod()
+    #import doctest
+    #doctest.testmod()
