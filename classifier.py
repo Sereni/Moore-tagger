@@ -1,11 +1,13 @@
 __author__ = 'Sereni'
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from sklearn.linear_model import SGDClassifier
 from sklearn.cross_validation import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import average_precision_score, roc_curve, auc, \
+    precision_recall_curve, accuracy_score, roc_auc_score, classification_report
 from sklearn.externals import joblib
 from sklearn import grid_search
 import csv
@@ -130,7 +132,30 @@ if __name__ == '__main__':
 
     clf = SGDClassifier(penalty='elasticnet', eta0=0.00390625, learning_rate='constant', alpha=1e-06, loss='hinge')
     y_score = clf.fit(data_train, target_train).decision_function(data_test)
-    print(y_score)
+    #y_true, y_pred = target_test, clf.predict(data_test)
+    #print(y_score)
+
+    s = {}
+    precision, recall, _ = precision_recall_curve(target_test, y_score)
+    s["average_precision"] = average_precision_score(target_test, y_score)
+    s["roc_auc"] = roc_auc_score(target_test, y_score)
+    #s["accuracy"] = accuracy_score(target_test, y_predict)
+
+    for statistic in s:
+        print("%s: %.3f" % (statistic, s[statistic]))
+
+
+    # Plot Precision-Recall curve
+    plt.clf()
+    plt.plot(recall, precision, label='Precision-Recall curve')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.ylim([0.0, 1.05])
+    plt.xlim([0.0, 1.0])
+    plt.title('Precision-Recall curve: AUC={0:0.5f}'.format(s["average_precision"]))
+    plt.show()
+    plt.savefig()
+
 
     print('Going ROCs!')
     # Compute ROC curve and ROC area for each class
